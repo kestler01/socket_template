@@ -3,6 +3,9 @@ const app = express()
 const http = require('http')
 const server = http.createServer(app)
 // express basics above
+//db connection in between
+require('dotenv').config()
+require('./config/database')
 // socket goodness below
 const { Server } = require('socket.io')
 // create a new socket.io instance by passing the express server to the sockets Server constructor function, 
