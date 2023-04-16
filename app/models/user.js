@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
 		email: {
 			type: String,
 			required: true,
-			// unique: true
+			unique: true,
 		},
 		// userName: {
 		// 	type: String,
@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
 			required: true,
 		},
 		token: String,
-		socket:String,
+		socket: String,
 		friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 	},
 	{
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
 		toObject: {
 			virtuals: true,
 			transform: (_doc, user) => {
-				delete user.hashedPassword
+				delete user.hashPassword
 				delete user.email
 				return user
 			},
@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
 		toJson: {
 			virtuals: true,
 			transform: (_doc, user) => {
-				delete user.hashedPassword
+				delete user.hashPassword
 				delete user.email
 				return user
 			},
