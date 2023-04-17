@@ -12,8 +12,8 @@ const messages = document.getElementById('messages')
 const signupForm = document.getElementById('signupForm')
 const signinForm = document.getElementById('signinForm')
 console.log('load js')
-console.log('signupForm:', signupForm)
-console.log('signinForm:', signinForm)
+// console.log('signupForm:', signupForm)
+// console.log('signinForm:', signinForm)
 
 // form.addEventListener('submit', function (e) {
 // 	e.preventDefault()
@@ -43,20 +43,10 @@ signupForm.addEventListener('submit', function (e) {
 	}
 })
 
-socket.on('signupSuccess', (data) => {
-	console.log('received sign-up socket emit, data is :', data)
-	const item = document.createElement('li')
-	item.textContent = data
-	messages.appendChild(item)
-	window.scrollTo(0, document.body.scrollHeight)
-})
-
 signinForm.addEventListener('submit', function (e) {
 	e.preventDefault()
 	let email = e.target[0].value
 	let password = e.target[1].value
-	
-
 
 	if (email && password) {
 		const payload = { email, password }
@@ -70,7 +60,7 @@ signinForm.addEventListener('submit', function (e) {
 	}
 })
 
-socket.on('signinSuccess', (data) => {
+socket.on('signupSuccess', (data) => {
 	console.log('received sign-up socket emit, data is :', data)
 	const item = document.createElement('li')
 	item.textContent = data
@@ -78,15 +68,25 @@ socket.on('signinSuccess', (data) => {
 	window.scrollTo(0, document.body.scrollHeight)
 })
 
+socket.on('signinSuccess', (data) => {
+	console.log('received sign-up socket emit, data is :', data)
+	// const item = document.createElement('li')
+	// item.textContent = data
+	// messages.appendChild(item)
+	window.scrollTo(0, document.body.scrollHeight)
+	signupForm.style.display='none'
+	signinForm.style.display='none'
+	socket.emit('indexUsers')
+})
+
 // current expected data received here is the socket id
-
-
 socket.on('chat message', (msg) => {
 	const item = document.createElement('li')
 	item.textContent = msg
 	messages.appendChild(item)
 	window.scrollTo(0, document.body.scrollHeight)
 })
+
 socket.on('error', (error) => {
 	console.log('Error!', error)
 	console.log('error status: ', error.status)

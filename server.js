@@ -11,7 +11,8 @@ const { Server } = require('socket.io')
 // create a new socket.io instance by passing the express server to the sockets Server constructor function,
 const io = new Server(server)
 // express router constants
-const userRoutes = require('./app/routes/userRoutes')
+const {signup, signin, signout, changePassword} = require('./app/routes/userRoutes')
+const {indexUsers} = require('./app/routes/chatRoutes')
 // const user = require('./app/models/user')
 const auth = require('./app/lib/auth')
 const customErrorHandler = require('./app/lib/errorHandler')
@@ -37,20 +38,35 @@ io.on('connection', (socket) => {
 	socket.on('signup', (data) => {
 		console.log(' a user signed up ')
         console.log(data)
-		userRoutes['signup'](data, io, socket.id, customErrorHandler)
+		signup(data, io, socket.id, customErrorHandler)
 	})
 	socket.on('signin', (data) => {
 		console.log(' a user signed in ')
         console.log(data)
-        userRoutes['signin'](data, io, socket.id, customErrorHandler)
+        signin(data, io, socket.id, customErrorHandler)
 	})
-	socket.on('disconnect', () => {
+	// do i want to write a middleware that keeps track of active socket Id's and associated users to streamline auth, sort of like the bearer token passport stuff ?,
+	// I guess i could leverage the socket request headers to implement the bearer token strategy 
+	socket.on('changePassword', (data) => {
+		console.log('received change pw request')
+		changePassword(data, io, socket.id, customErrorHandler)
+	})
+	socket.on('disconnect', (data) => {
+		signout(data, io, socket.id, customErrorHandler)
+		// console.log(socket.rooms)// interesting being able to get the socket rooms left on disconnect even tho cleanup is automated - will be great for trigger appropriate emits to those rooms 
 		console.log(' a user disconnected')
-		io.emit('chat message', 'a use has left the chat')
+	})
+	socket.on('indexUsers', (data) => {
+		console.log('in index')
+		indexUsers(data, io, socket.id, customErrorHandler)
 	})
 	socket.on('chat message', (msg) => {
 		console.log('message: ' + msg)
 		io.emit('chat message', msg)
+	})
+	socket.on('private message', (anotherSocketId, msg) => {
+
+		socket.to(anotherSocketId).emit('private message', socket.id, msg)
 	})
 })
 

@@ -69,7 +69,8 @@ const handle404 = record => {
 
 module.exports = {
   requireOwnership,
-  handle404,
+  // handle404,
+  DocumentNotFoundError, 
   BadParamsError,
   BadCredentialsError
 }
