@@ -13,16 +13,17 @@ const routerObj = {}
 routerObj['signup'] = async (data, io, socketId, next) => {
 	console.log('in signup route before user creation', data)
 	try {
-		if (
+		if ( // check redundant with FE JS but i don't see that as a bad thing 
 			!data ||
-			!data.password ||
+			!data.password || !data.username || 
 			data.password !== data.passwordConfirmation
 		) {
 			throw new BadParamsError()
 		}
 		const hashPassword = await bcrypt.hash(data.password, bcryptSaltRounds)
-		let email = data.email
-		let userData = { email, hashPassword }
+		let {email, username} = data
+		
+		let userData = { email, username ,hashPassword }
 		// userData.email = data.email,
 		// userData.hashedPassword = hash
 		let user = await User.create(userData)
@@ -91,11 +92,7 @@ routerObj['changePassword'] = async (data, io, socketId, next) => {
 routerObj['signout'] = async (data, io, socketId, next) => {
 	console.log('in signout route')
 	try {
-		const user = await User.findOne({ socketId: socketId }).populate()
-		// if(!user){
-		// 	throw new BadCredentialsError()
-		// }
-		// const Friends = user.friends // for potential friend sign in and off messaging
+		const user = await User.findOne({ socketId: socketId })
 		if (user) {
 			user.socket = null
 			await user.save()

@@ -13,8 +13,9 @@ const routerObj = {}
 routerObj['indexUsers'] = async (data, io, socketId, next) => {
     try {
         console.log('in index users')
-        let users = await User.find({})
+        let users = await User.find({'socket' : {$ne: (null || socketId)}})
         console.log('users', users)
+        io.to(socketId).emit('indexUsersSuccess', users )
     } catch (error) {
         next(error, io, socketId)
     }

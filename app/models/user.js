@@ -7,17 +7,20 @@ const userSchema = new mongoose.Schema(
 			required: true,
 			unique: true,
 		},
-		// userName: {
-		// 	type: String,
-		// 	required: true,
-		// 	unique: true
-		// },
+		username: {
+			type: String,
+			required: true,
+			unique: true,
+		},
 		hashPassword: {
 			type: String,
 			required: true,
 		},
 		token: String, // will not need for basic auth but may need for reconnection goodness ...
-		socket: String, // currently using socketID in place of token for basic auth
+		socket: {
+			type: String,
+			default: null
+		}, // currently using socketID in place of token for basic auth
 		friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 	},
 	{

@@ -24,20 +24,23 @@ console.log('load js')
 // 	}
 // })
 
-signupForm.addEventListener('submit', function (e) {
+signupForm.addEventListener('submit',(e) => {
 	e.preventDefault()
 	// console.log('clicked sign up, e is:', e)
 	let email=e.target[0].value
-	let password=e.target[1].value
-	let passwordConfirmation=e.target[2].value
-	if (email && password && passwordConfirmation) {
-		const payload = { email, password , passwordConfirmation}
+	let username=e.target[1].value
+	let password=e.target[2].value
+	let passwordConfirmation=e.target[3].value
+	if (email && username && password && passwordConfirmation) {
+		const payload = { email, username, password , passwordConfirmation}
 		// socket.auth['email'] = email
 		// socket.auth['password'] = password
 		// socket.auth['passwordConfirmation']= passwordConfirmation
 		// console.log(socket.auth)
 		socket.emit('signup', payload)
+
 		email = ''
+		username = ''
 		password = ''
 		passwordConfirmation = ''
 	}
@@ -50,7 +53,7 @@ signinForm.addEventListener('submit', function (e) {
 
 	if (email && password) {
 		const payload = { email, password }
-		console.log(payload)
+		// console.log(payload)
 		// socket.data['email'] = email
 		// socket['data']['password'] = password
 		// console.log(socket.auth)
@@ -77,6 +80,16 @@ socket.on('signinSuccess', (data) => {
 	signupForm.style.display='none'
 	signinForm.style.display='none'
 	socket.emit('indexUsers')
+})
+
+socket.on('indexUsersSuccess', (data) => {
+	console.log('received index success, data:',data)
+	data.forEach((user) => {
+		const item = document.createElement('li')
+		item.textContent = JSON.stringify(user?.username) // or JSON.stringify(user) - is the data coming in json ? 
+		messages.appendChild(item)
+		window.scrollTo(0, document.body.scrollHeight)
+	})
 })
 
 // current expected data received here is the socket id
